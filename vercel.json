@@ -1,0 +1,18 @@
+{
+  "buildCommand": "pnpm run build",
+  "crons": [
+    {
+      "path": "/api/updateStatus",
+      "schedule": "* * * * *"
+    }
+  ],
+  "devCommand": "pnpm run dev",
+  "functions": {
+    "api/bot.ts": {
+      "memory": 256,
+      "maxDuration": 15
+    }
+  },
+  "installCommand": "pnpm install",
+  "outputDirectory": "build"
+}
