@@ -3,9 +3,9 @@ import { i18n } from '../locales/I18n';
 import Languages from '../locales/spokenLanguages.json';
 import { InlineKeyboardButton } from 'grammy/types';
 
-const getChosenLangsKeyboard = async (ctx: BotContext) => {
+const getChosenLangsKeyboard = async (conversation: BotConversation, ctx: BotContext) => {
   const spokenLanguagesKeyboard: InlineKeyboardButton[][] = [];
-  const session = await ctx.session;
+  const session = await conversation.session;
 
   let row: InlineKeyboardButton[] = [];
   for (let i = 0; i < Languages.length; i++) {
@@ -39,7 +39,7 @@ const getChosenLangsKeyboard = async (ctx: BotContext) => {
 export const choseLangs = async (conversation: BotConversation, ctx: BotContext) => {
   await conversation.run(i18n);
 
-  const keyboard = await getChosenLangsKeyboard(ctx);
+  const keyboard = await getChosenLangsKeyboard(conversation, ctx);
   const message = await ctx.reply(ctx.t('chose-lang'), { reply_markup: {
     inline_keyboard: keyboard,
   }});
@@ -58,7 +58,6 @@ export const choseLangs = async (conversation: BotConversation, ctx: BotContext)
       conversation.error(err);
     }
     
-
     if (callback.callbackQuery.data === 'sl-finish') {
       finished = true;
       await ctx.api.deleteMessage(message.chat.id, message.message_id);
@@ -66,7 +65,6 @@ export const choseLangs = async (conversation: BotConversation, ctx: BotContext)
     } else {
       const parts = callback.callbackQuery.data.split('-');
       const countryCode = parts[2];
-      conversation.log(session.user.spokenLanguages);
       if (session.user.spokenLanguages.includes(countryCode)) {
         conversation.log(`Removing ${countryCode}`);
         session.user.spokenLanguages = session.user.spokenLanguages.filter(el => el !== countryCode);
@@ -74,15 +72,14 @@ export const choseLangs = async (conversation: BotConversation, ctx: BotContext)
         conversation.log(`Adding ${countryCode}`);
         session.user.spokenLanguages.push(countryCode)
       }
-      const updatedKeyboard = await getChosenLangsKeyboard(ctx);
+      conversation.log(session.user.spokenLanguages);
+      const updatedKeyboard = await getChosenLangsKeyboard(conversation, ctx);
       
-      if (callback.inlineMessageId) {
-        await ctx.api.editMessageReplyMarkup(message.chat.id, message.message_id, {
-          reply_markup: {
-            inline_keyboard: updatedKeyboard,
-          }
-        });
-      }
+      await ctx.api.editMessageReplyMarkup(message.chat.id, message.message_id, {
+        reply_markup: {
+          inline_keyboard: updatedKeyboard,
+        }
+      });
     }
   } while (finished !== true);
   
