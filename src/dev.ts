@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { Bot } from "grammy";
 import { App } from './app/App';
+import { BotContext } from './app/Context';
 
 dotenv.config();
 
@@ -9,7 +10,7 @@ if (!token) {
   throw new Error("BOT_TOKEN is unset");
 }
 
-const bot = new Bot(token);
+const bot = new Bot<BotContext>(token);
 
 new App({
   bot,
