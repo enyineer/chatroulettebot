@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "pnpm nodemon",
     "build": "pnpm run lint && rimraf build && tsc",
-    "lint": "pnpm eslint ./src"
+    "lint": "pnpm eslint ./src",
+    "postinstall": "pnpm prisma generate"
   },
   "keywords": [],
   "author": "",
