@@ -21,7 +21,7 @@ interface RouletteData {
 export interface SessionData {
   user: UserSettings;
   roulette: RouletteData;
-  chosenLangs: {
+  choseLangMessage: {
     chatId: number;
     messageId: number;
   } | null;

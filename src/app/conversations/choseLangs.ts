@@ -38,13 +38,25 @@ const getChosenLangsKeyboard = (spokenLanguages: string[], ctx: BotContext) => {
 export const choseLangs = async (conversation: BotConversation, ctx: BotContext) => {
   await conversation.run(i18n);
 
+  // Make sure to remove the old convo if it was already started
+  const oldConvo = (await ctx.session).choseLangMessage;
+  if (oldConvo) {
+    try {
+      await ctx.api.deleteMessage(oldConvo.chatId, oldConvo.messageId);
+    } catch (err) {
+      // Ignore
+    } finally {
+      (await ctx.session).choseLangMessage = null;
+    }
+  }
+
   const spokenLanguages = (await conversation.session).user.spokenLanguages;
   const keyboard = getChosenLangsKeyboard(spokenLanguages, ctx);
   const message = await ctx.reply(ctx.t('chose-lang'), { reply_markup: {
     inline_keyboard: keyboard,
   }});
 
-  (await conversation.session).chosenLangs = {
+  (await conversation.session).choseLangMessage = {
     chatId: message.chat.id,
     messageId: message.message_id,
   }
