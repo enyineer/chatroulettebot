@@ -5,6 +5,7 @@ import { InlineKeyboardButton } from 'grammy/types';
 
 const getChosenLangsKeyboard = (spokenLanguages: string[], ctx: BotContext) => {
   const spokenLanguagesKeyboard: InlineKeyboardButton[][] = [];
+  console.log('Spoken languages', spokenLanguages);
 
   let row: InlineKeyboardButton[] = [];
   for (let i = 0; i < Languages.length; i++) {
@@ -19,7 +20,7 @@ const getChosenLangsKeyboard = (spokenLanguages: string[], ctx: BotContext) => {
 
     row.push(button);
     
-    if (i > 0 && i % 3 === 0) {
+    if (i > 1 && i % 3 === 0) {
       spokenLanguagesKeyboard.push(row);
       row = [];
     }
