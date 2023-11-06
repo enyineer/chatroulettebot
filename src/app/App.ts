@@ -28,7 +28,8 @@ export class App {
             bans: [],
             language: null,
             spokenLanguages: [],
-          }
+          },
+          chosenLangs: null,
         }),
         storage: new PrismaAdapter<SessionData>(prismaClient.session),
       })
@@ -46,8 +47,20 @@ export class App {
     );
 
     props.bot.command('start', async (ctx) => {
+      // Make sure to remove the old convo if it was already started
+      const oldConvo = (await ctx.session).chosenLangs;
+      if (oldConvo) {
+        try {
+          await ctx.api.deleteMessage(oldConvo.chatId, oldConvo.messageId);
+        } catch (err) {
+          // Ignore
+        } finally {
+          await ctx.conversation.exit('choseLangs');
+          (await ctx.session).chosenLangs = null;
+        }
+      }
       // Enter setup
-      await ctx.conversation.enter("choseLangs");
+      await ctx.conversation.enter('choseLangs');
     });
 
     this.bot = props.bot;

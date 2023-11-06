@@ -5,7 +5,6 @@ import { InlineKeyboardButton } from 'grammy/types';
 
 const getChosenLangsKeyboard = (spokenLanguages: string[], ctx: BotContext) => {
   const spokenLanguagesKeyboard: InlineKeyboardButton[][] = [];
-  console.log('Spoken languages', spokenLanguages);
 
   let row: InlineKeyboardButton[] = [];
   for (let i = 0; i < Languages.length; i++) {
@@ -44,6 +43,11 @@ export const choseLangs = async (conversation: BotConversation, ctx: BotContext)
   const message = await ctx.reply(ctx.t('chose-lang'), { reply_markup: {
     inline_keyboard: keyboard,
   }});
+
+  (await conversation.session).chosenLangs = {
+    chatId: message.chat.id,
+    messageId: message.message_id,
+  }
 
   let finished = false;
   do {

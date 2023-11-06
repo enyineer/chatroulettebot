@@ -21,6 +21,10 @@ interface RouletteData {
 export interface SessionData {
   user: UserSettings;
   roulette: RouletteData;
+  chosenLangs: {
+    chatId: number;
+    messageId: number;
+  } | null;
 }
 
 // create context for grammy instance
