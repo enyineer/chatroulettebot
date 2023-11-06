@@ -38,9 +38,8 @@ const getChosenLangsKeyboard = (spokenLanguages: string[], ctx: BotContext) => {
 export const choseLangs = async (conversation: BotConversation, ctx: BotContext) => {
   await conversation.run(i18n);
 
-  const session = await conversation.session;
-
-  const keyboard = getChosenLangsKeyboard(session.user.spokenLanguages, ctx);
+  const spokenLanguages = (await conversation.session).user.spokenLanguages;
+  const keyboard = getChosenLangsKeyboard(spokenLanguages, ctx);
   const message = await ctx.reply(ctx.t('chose-lang'), { reply_markup: {
     inline_keyboard: keyboard,
   }});
@@ -64,15 +63,15 @@ export const choseLangs = async (conversation: BotConversation, ctx: BotContext)
     } else {
       const parts = callback.callbackQuery.data.split('-');
       const countryCode = parts[2];
-      if (session.user.spokenLanguages.includes(countryCode)) {
+      const spokenLanguages = (await conversation.session).user.spokenLanguages;
+      if (spokenLanguages.includes(countryCode)) {
         conversation.log(`Removing ${countryCode}`);
-        session.user.spokenLanguages = session.user.spokenLanguages.filter(el => el !== countryCode);
+        (await conversation.session).user.spokenLanguages = spokenLanguages.filter(el => el !== countryCode);
       } else {
         conversation.log(`Adding ${countryCode}`);
-        session.user.spokenLanguages.push(countryCode)
+        (await conversation.session).user.spokenLanguages.push(countryCode)
       }
-      conversation.log(session.user.spokenLanguages);
-      const updatedKeyboard = getChosenLangsKeyboard(session.user.spokenLanguages, ctx);
+      const updatedKeyboard = getChosenLangsKeyboard((await conversation.session).user.spokenLanguages, ctx);
       
       await ctx.api.editMessageReplyMarkup(message.chat.id, message.message_id, {
         reply_markup: {
