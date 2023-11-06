@@ -3,15 +3,14 @@ import { i18n } from '../locales/I18n';
 import Languages from '../locales/spokenLanguages.json';
 import { InlineKeyboardButton } from 'grammy/types';
 
-const getChosenLangsKeyboard = async (conversation: BotConversation, ctx: BotContext) => {
+const getChosenLangsKeyboard = (spokenLanguages: string[], ctx: BotContext) => {
   const spokenLanguagesKeyboard: InlineKeyboardButton[][] = [];
-  const session = await conversation.session;
 
   let row: InlineKeyboardButton[] = [];
   for (let i = 0; i < Languages.length; i++) {
     const language = Languages[i];
 
-    const isChosen = session.user.spokenLanguages.includes(language.code);
+    const isChosen = spokenLanguages.includes(language.code);
 
     const button: InlineKeyboardButton = {
       callback_data: `sl-toggle-${language.code}`,
@@ -39,12 +38,12 @@ const getChosenLangsKeyboard = async (conversation: BotConversation, ctx: BotCon
 export const choseLangs = async (conversation: BotConversation, ctx: BotContext) => {
   await conversation.run(i18n);
 
-  const keyboard = await getChosenLangsKeyboard(conversation, ctx);
+  const session = await conversation.session;
+
+  const keyboard = getChosenLangsKeyboard(session.user.spokenLanguages, ctx);
   const message = await ctx.reply(ctx.t('chose-lang'), { reply_markup: {
     inline_keyboard: keyboard,
   }});
-
-  const session = await conversation.session;
 
   let finished = false;
   do {
@@ -73,7 +72,7 @@ export const choseLangs = async (conversation: BotConversation, ctx: BotContext)
         session.user.spokenLanguages.push(countryCode)
       }
       conversation.log(session.user.spokenLanguages);
-      const updatedKeyboard = await getChosenLangsKeyboard(conversation, ctx);
+      const updatedKeyboard = getChosenLangsKeyboard(session.user.spokenLanguages, ctx);
       
       await ctx.api.editMessageReplyMarkup(message.chat.id, message.message_id, {
         reply_markup: {
