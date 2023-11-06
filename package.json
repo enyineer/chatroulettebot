@@ -24,6 +24,8 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@grammyjs/conversations": "^1.1.2",
+    "@grammyjs/i18n": "^1.0.1",
     "@grammyjs/storage-prisma": "^2.4.0",
     "@prisma/client": "5.5.2",
     "dotenv": "^16.3.1",
