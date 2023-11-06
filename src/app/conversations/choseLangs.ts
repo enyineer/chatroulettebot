@@ -82,10 +82,8 @@ export const choseLangs = async (conversation: BotConversation, ctx: BotContext)
       const countryCode = parts[2];
       const spokenLanguages = (await conversation.session).user.spokenLanguages;
       if (spokenLanguages.includes(countryCode)) {
-        conversation.log(`Removing ${countryCode}`);
         (await conversation.session).user.spokenLanguages = spokenLanguages.filter(el => el !== countryCode);
       } else {
-        conversation.log(`Adding ${countryCode}`);
         (await conversation.session).user.spokenLanguages.push(countryCode)
       }
       const updatedKeyboard = getChosenLangsKeyboard((await conversation.session).user.spokenLanguages, ctx);
