@@ -44,7 +44,7 @@ export const choseLangs = async (conversation: BotConversation, ctx: BotContext)
     inline_keyboard: keyboard,
   }});
 
-  const session = await ctx.session;
+  const session = await conversation.session;
 
   let finished = false;
   do {
@@ -69,10 +69,10 @@ export const choseLangs = async (conversation: BotConversation, ctx: BotContext)
       conversation.log(session.user.spokenLanguages);
       if (session.user.spokenLanguages.includes(countryCode)) {
         conversation.log(`Removing ${countryCode}`);
-        await conversation.external(() => session.user.spokenLanguages = session.user.spokenLanguages.filter(el => el !== countryCode));
+        session.user.spokenLanguages = session.user.spokenLanguages.filter(el => el !== countryCode);
       } else {
         conversation.log(`Adding ${countryCode}`);
-        await conversation.external(() => session.user.spokenLanguages.push(countryCode));
+        session.user.spokenLanguages.push(countryCode)
       }
       const updatedKeyboard = await getChosenLangsKeyboard(ctx);
       

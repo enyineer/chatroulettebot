@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm nodemon",
-    "build": "pnpm run lint && rimraf build && tsc",
+    "build": "pnpm run lint && rimraf build && pnpm run copy-files && tsc",
     "lint": "pnpm eslint ./src",
+    "copy-files": "copyfiles -u 1 src/**/*.ftl build/",
     "postinstall": "pnpm prisma generate"
   },
   "keywords": [],
@@ -16,6 +17,7 @@
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.9.1",
     "@vercel/node": "^3.0.7",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.53.0",
     "nodemon": "^3.0.1",
     "prisma": "^5.5.2",
